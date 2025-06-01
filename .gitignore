@@ -1,0 +1,86 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+
+/local.properties
+
+/build/
+**/build
+
+### Android Studio files ###
+*.iml
+.idea/assetWizardSettings.xml
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/kotlinc.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/deploymentTargetSelector.xml
+.idea/appInsightsSettings.xml
+.idea/other.xml
+.idea/AndroidProjectSystem.xml
+
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/androidTestResultsUserPreferences.xml
+.idea/deploymentTargetDropDown.xml
+.idea/shelf/*
+*/.idea/copilot/
+.idea/migrations.xml
+.idea/caches/
+.idea/runConfigurations.xml
+
+# Sensitive or high-churn files:
+.idea/dataSources.ids
+.idea/dataSources.xml
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+.idea/navEditor.xml
+
+# Gradle:
+.idea/gradle.xml
+.idea/libraries
+.idea/encodings.xml
+.idea/misc.xml
+.idea/vcs.xml
+.gradle
+
+#Captures
+captures
+
+## File-based project format:
+*.ipr
+*.iws
+/.idea/caches/build_file_checksums.ser
+/.idea/caches/gradle_models.ser
+
+## Google API key files
+/app/src/debug/res/values/google_maps_api.xml
+/app/src/release/res/values/google_maps_api.xml
+/app/src/qa/res/values/google_maps_api.xml
+
+## Transifex script project
+/transifex/
+
+## Generated Files
+*.DS_Store
+wget-log
+
+credentials.properties
+.kotlin
