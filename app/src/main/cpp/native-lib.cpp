@@ -4,6 +4,8 @@
 #include "arpa/inet.h"
 #include "unistd.h"
 #include "android/log.h"
+#include "utils/functions.h"
+#include <fcntl.h>
 
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, "fingerprintnative", __VA_ARGS__);
 
@@ -19,7 +21,7 @@ extern "C"
 JNIEXPORT jboolean JNICALL Java_com_lidongyooo_fingerprint_MainActivity_fridaPortCheck(JNIEnv *env, jobject /*this*/, jint port) {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
-        LOGE("socket() failed with errno: %d (%s)", errno, strerror(errno)); // 👈 关
+        LOGE("socket() failed with errno: %d (%s)", errno, strerror(errno));
         return JNI_FALSE;
     }
 
@@ -42,10 +44,10 @@ JNIEXPORT jboolean JNICALL Java_com_lidongyooo_fingerprint_MainActivity_fridaMap
     char line[512];
     FILE *fp;
     fp = fopen("/proc/self/maps", "r");
+    LOGE("fridaMapsCheck");
     if (fp) {
-        while (fgets(line, 512, fp)) {
-            LOGE("%s", line);
-            if (strstr(line, "frida")) {
+        while (fgets(line, sizeof(line), fp)) {
+            if (my_strstr(line, "frida")) {
                 return JNI_TRUE;
             }
         }
@@ -56,18 +58,19 @@ JNIEXPORT jboolean JNICALL Java_com_lidongyooo_fingerprint_MainActivity_fridaMap
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_lidongyooo_fingerprint_MainActivity_fridaCheck(JNIEnv *env, jobject /*this*/) {
+JNIEXPORT jboolean JNICALL Java_com_lidongyooo_fingerprint_MainActivity_fridaLibcCheck(JNIEnv *env, jobject /*this*/) {
     char line[512];
-    FILE *fp;
-    fp = fopen("/proc/self/maps", "r");
-    if (fp) {
-        while (fgets(line, 512, fp)) {
-            if (strstr(line, "frida")) {
-                return JNI_TRUE;
+    int fd = my_open("/proc/self/maps", O_RDONLY);
+    int counter = 0;
+    LOGE("fridaLibcCheck");
+    if (fd >= 0) {
+        while (my_getline(line, sizeof(line), fd)) {
+            if (my_strstr(line, "libc.so")) {
+                counter++;
             }
         }
-        fclose(fp);
+        my_close(fd);
     }
 
-    return JNI_FALSE;
+    return counter >= 10 ? JNI_TRUE : JNI_FALSE;
 }

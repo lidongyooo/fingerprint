@@ -31,13 +31,13 @@ public class MainActivity extends AppCompatActivity {
         tv.setText(stringFromJNI());
         boolean result = fridaPortCheck(27042); // 确保返回 boolean，不是 Boolean
         Log.e("fingerprintxxx", String.valueOf(result));
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                boolean isFridaDetected = fridaMapsCheck();
-                Log.e("fingerprintxxx", String.valueOf(isFridaDetected));
-            }
-        }, 3000); // 3000 毫秒 = 3 秒
+//        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+                Log.e("fingerprintxxx", String.valueOf(fridaMapsCheck()));
+                Log.e("fingerprintxxx", String.valueOf(fridaLibcCheck()));
+//            }
+//        }, 3000); // 3000 毫秒 = 3 秒
     }
 
     /**
@@ -49,4 +49,6 @@ public class MainActivity extends AppCompatActivity {
     public native boolean fridaPortCheck(int port);
 
     public native boolean fridaMapsCheck();
+
+    public native boolean fridaLibcCheck();
 }
