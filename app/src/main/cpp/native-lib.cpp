@@ -3,11 +3,11 @@
 #include "netinet/in.h"
 #include "arpa/inet.h"
 #include "unistd.h"
-#include "android/log.h"
 #include "utils/functions.h"
 #include <fcntl.h>
-
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, "fingerprintnative", __VA_ARGS__);
+#include "utils/syscall.h"
+#include "unistd.h"
+#include "sys/syscall.h"
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_lidongyooo_fingerprint_MainActivity_stringFromJNI(
@@ -60,16 +60,21 @@ JNIEXPORT jboolean JNICALL Java_com_lidongyooo_fingerprint_MainActivity_fridaMap
 extern "C"
 JNIEXPORT jboolean JNICALL Java_com_lidongyooo_fingerprint_MainActivity_fridaLibcCheck(JNIEnv *env, jobject /*this*/) {
     char line[512];
-    int fd = my_open("/proc/self/maps", O_RDONLY);
+    const char *path = "/proc/self/maps";
+    int fd = _my_syscall(__NR_openat, AT_FDCWD, path, O_RDONLY, 0);
     int counter = 0;
     LOGE("fridaLibcCheck");
+    LOGE("%d", fd);
+    LOGE("Error opening /proc/self/maps: %s (errno: %d)\n", strerror(errno), errno);
     if (fd >= 0) {
-        while (my_getline(line, sizeof(line), fd)) {
+        LOGE("aaaaaa");
+        while (my_fgets(line, sizeof(line), fd)) {
+            LOGE("%s", line);
             if (my_strstr(line, "libc.so")) {
                 counter++;
             }
         }
-        my_close(fd);
+        _my_syscall(__NR_close, fd);
     }
 
     return counter >= 10 ? JNI_TRUE : JNI_FALSE;

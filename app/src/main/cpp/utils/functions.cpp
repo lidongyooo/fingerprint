@@ -5,6 +5,9 @@
 #include <stddef.h>
 #include "sys/types.h"
 #include "functions.h"
+#include "syscall.h"
+#include "sys/syscall.h"
+#include "errno.h"
 
 size_t my_strlen(const char *str) {
     size_t len = 0;
@@ -14,7 +17,7 @@ size_t my_strlen(const char *str) {
 
 char* my_strstr(const char* haystack, const char* needle) {
     if (!needle) {
-        return (char*) &haystack;
+        return (char*) haystack;
     }
 
     size_t h_len = my_strlen(haystack);
@@ -34,20 +37,38 @@ char* my_strstr(const char* haystack, const char* needle) {
     return nullptr;
 }
 
-ssize_t my_getline(char *buf, size_t size, int fd) {
-    if (!buf || size <= 0) return -1;
 
-    size_t i = 0;
-    char c;
+char* my_fgets(char *buf, int size, int fd) {
+    if (buf == NULL || size <= 0 || fd < 0)
+        return NULL;
 
-    while (i < size - 1) {
-        ssize_t n = my_read(fd, &c, 1);
-        if (n <= 0) break; // EOF or error
+    char *p = buf;
+    int remaining = size - 1;
+    ssize_t n;
 
-        buf[i++] = c;
-        if (c == '\n') break;
+    while (remaining > 0) {
+        char c;
+        n = _my_syscall(__NR_read, fd, &c, 1);
+
+        if (n <= 0) {
+            // 错误或 EOF
+            break;
+        }
+
+        *p++ = c;
+        remaining--;
+
+        if (c == '\n') {
+            break; // 遇到换行符则停止
+        }
     }
 
-    buf[i] = '\0';
-    return i > 0 ? (ssize_t)i : -1;
+    *p = '\0'; // 字符串结尾
+
+    if (p == buf && n <= 0) {
+        // 没有读取任何内容，且发生错误或 EOF
+        return NULL;
+    }
+
+    return buf;
 }

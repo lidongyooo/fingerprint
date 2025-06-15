@@ -29,6 +29,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         native-lib.cpp
         utils/functions.cpp
         utils/syscall.S
+        utils/syscall.cpp
 )
 
 # Specifies libraries CMake should link to your target library. You
@@ -39,6 +40,12 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         android
         log)
 
+target_include_directories(fingerprint PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
+        $<$<COMPILE_LANGUAGE:ASM>:--target=aarch64-linux-android>
+        $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp>
+)
 
 set(can_use_assembler TRUE)
 enable_language(ASM)
